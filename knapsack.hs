@@ -3,11 +3,27 @@ import System.IO
 import System.IO.Unsafe
 import Data.Tuple
 
+-- Test, Schneier
+privateKey = PrivateKey 6 105 31 [2, 3, 6, 13, 27, 52]
+publicKey  = genPublicKey privateKey
+test = [[0,0,0,0,0,0] == (decrypt privateKey $ encrypt publicKey [0,0,0,0,0,0]),
+        [0,0,0,0,0,1] == (decrypt privateKey $ encrypt publicKey [0,0,0,0,0,1]),
+        [0,0,0,0,1,0] == (decrypt privateKey $ encrypt publicKey [0,0,0,0,1,0]),
+        [0,0,0,1,0,0] == (decrypt privateKey $ encrypt publicKey [0,0,0,1,0,0]),
+        [0,0,1,0,0,0] == (decrypt privateKey $ encrypt publicKey [0,0,1,0,0,0]),
+        [0,1,0,0,0,0] == (decrypt privateKey $ encrypt publicKey [0,1,0,0,0,0]),
+        [1,0,0,0,0,0] == (decrypt privateKey $ encrypt publicKey [1,0,0,0,0,0]),
+        [0,1,1,0,0,0] == (decrypt privateKey $ encrypt publicKey [0,1,1,0,0,0]),
+        [1,1,0,1,0,1] == (decrypt privateKey $ encrypt publicKey [1,1,0,1,0,1]),
+        [1,0,1,1,1,0] == (decrypt privateKey $ encrypt publicKey [1,0,1,1,1,0])]
+
 -- Datenstruktur fuer eine privaten Schluessel
 data PrivateKey = PrivateKey Int Integer Integer [Integer] deriving (Show) 
 
 -- Datenstruktur fuer eine oeffentlichen Schluessel
 data PublicKey  = PublicKey Int [Integer] deriving (Show) 
+
+
 
 --Getter fuer Key Size
 getPrivateKeySize :: PrivateKey -> Int
@@ -135,6 +151,14 @@ encrypt :: PublicKey -> [Integer] -> Integer
 encrypt k t 
             | (getPublicKeySize k) /= (length t) = error "Schluessegroesse ungleich Text"
             | otherwise                          = encryptHelp (getPublicSequence k) t
-            
+
+-- Entschluesselt Nachricht mit Super-Absteigender Liste (reverse private sequence)
+decryptHelp :: [Integer] -> Integer -> [Integer]
+decryptHelp [k] c    | c - k == 0 = [1]
+                     | c     == 0 = [0]
+                     | otherwise  = error "Fehlerhafte Message - a"
+decryptHelp (k:ks) c | c - k >= 0 = (decryptHelp ks (c - k)) ++ [1]
+                     | otherwise  = (decryptHelp ks c) ++ [0]
+
 decrypt :: PrivateKey -> Integer -> [Integer]
-decrypt _ _ = error "Nicht Implementiert"
+decrypt k c = decryptHelp (reverse (getSecretSequence k)) (((c * (multInverse (getR k) (getQ k))) `mod` (getQ k)))
