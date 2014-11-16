@@ -1,5 +1,6 @@
 import System.Environment
 import Knapsack
+import Tests
 
 main = getArgs >>= handleArgs >>= putStrLn
 
