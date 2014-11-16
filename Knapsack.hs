@@ -1,3 +1,5 @@
+module Knapsack (test) where
+
 import System.Random
 import System.IO
 import System.IO.Unsafe
@@ -22,8 +24,6 @@ data PrivateKey = PrivateKey Int Integer Integer [Integer] deriving (Show)
 
 -- Datenstruktur fuer eine oeffentlichen Schluessel
 data PublicKey  = PublicKey Int [Integer] deriving (Show) 
-
-
 
 --Getter fuer Key Size
 getPrivateKeySize :: PrivateKey -> Int
