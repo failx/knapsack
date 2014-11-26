@@ -1,7 +1,8 @@
 module Knapsack where
 
-import Data.Tuple
 import Keys
+import qualified Data.ByteString.Lazy as BS
+import qualified Data.Binary as B
 
 -- Erweiterter euklidischer Algorithmus
 extEuclid :: Integer -> Integer -> (Integer, Integer, Integer)
@@ -16,19 +17,15 @@ multInverse a b = let (d,s,t) = extEuclid a b
                         then s + b
                         else s
 
--- Encrypt and a list (Bitfield) with the Public Key Sequence
+-- Encrypt a list (Bitfield) with the Public Key Sequence
 encryptHelp :: [Integer] -> [Integer] -> Integer
-encryptHelp [] []         = 0
-encryptHelp [] _          = error "Schluessel zu kurz"
-encryptHelp _ []          = error "Bitfield zu kurz"
-encryptHelp [k] [t]       = (*) k t
-encryptHelp (k:ks) (t:ts) = (+) ( (*) k t)  (encryptHelp ks ts)
+encryptHelp k t = sum $ zipWith (*) k t
 
 -- Encrypt a List of 0,1 (Bitfield) with a PublicKey
 encrypt :: PublicKey -> [Integer] -> Integer
 encrypt k t 
             | (publicKeySize k) /= (length t) = error "Schluessegroesse ungleich Text"
-            | otherwise                          = encryptHelp (publicKeySequence k) t
+            | otherwise                       = encryptHelp (publicKeySequence k) t
 
 -- Entschluesselt Nachricht mit Super-Absteigender Liste (reverse private sequence)
 decryptHelp :: [Integer] -> Integer -> [Integer]
@@ -41,8 +38,14 @@ decryptHelp (k:ks) c | c - k >= 0 = (decryptHelp ks (c - k)) ++ [1]
 decrypt :: PrivateKey -> Integer -> [Integer]
 decrypt k c = decryptHelp (reverse (privateKeySequence k)) (((c * (multInverse (privateKeyR k) (privateKeyQ k))) `mod` (privateKeyQ k)))
 
-encryptString :: PrivateKey -> String -> String
-encryptString = undefined
+encryptString :: PublicKey -> BS.ByteString -> BS.ByteString
+encryptString k bs = undefined
 
-decryptString :: PublicKey -> String -> String
-decryptString = undefined
+decryptString :: PrivateKey -> BS.ByteString -> BS.ByteString
+decryptString k bs = undefined
+
+toBitfield :: B.Word8 -> [Integer]
+toBitfield = undefined
+
+fromBitfield :: [Integer] -> B.Word8
+fromBitfield = undefined
