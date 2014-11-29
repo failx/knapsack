@@ -3,48 +3,62 @@ module Main where
 import qualified System.Environment as SE
 import qualified Knapsack as KS
 import qualified Keys as K
---import qualified Tests as T
-import qualified Data.ByteString.Lazy as BS
-import qualified Data.ByteString.Lazy.Char8 as BS8
+import qualified Tests as T
 import Crack
 
 main = SE.getArgs >>= handleArgs >>= putStrLn
 
 handleArgs :: [String] -> IO String
---handleArgs ["encrypt", publicKey]  = fmap BS8.unpack (Main.encrypt publicKey)
---handleArgs ["decrypt", privateKey] = fmap BS8.unpack (Main.decrypt privateKey)
---handleArgs ["create", name]        = create name
+handleArgs ["encrypt", publicKey]  = Main.encrypt publicKey
+handleArgs ["decrypt", privateKey] = Main.decrypt privateKey
+handleArgs ["create", fileName]    = Main.create fileName
 --handleArgs ["runtests"]            = return . show $ T.test
 --handleArgs ["shell"]               = return "foo"
---handleArgs ["crack", publicKey]    = return "foo"
+handleArgs ["crack", publicKey]    = Main.crack publicKey
 handleArgs _                       = return $ unlines options
 
 options = 
-  [ "clks usage: "
-  , "clks encrypt <public key file>    -- reads from stdin and encrypts to stdout"
-  , "clks decrypt <private key file>   -- reads from stdin and decrypts to stdout"
-  , "clks create <keypair name>        -- creates a public/private key pair"
-  , "clks runtests                     -- runs tests for the different modules"
-  , "clks shell                        -- starts an interactive shell"
-  , "clks crack <public key file>      -- reads from stdin and cracks to stdout"
+  [ "Usage: "
+  , ""
+  , "Knapsack encrypt <public key file>  -- encrypt message from stdin"
+  , "Knapsack decrypt <private key file> -- decrypt message from stdin"
+  , "Knapsack create <keypair name>      -- creates a public/private key pair"
+  , "Knapsack crack <public key file>    -- crack message from stdin"
+  , "Knapsack runtests                   -- runs tests for the different modules"
+  , "Knapsack shell                      -- starts an interactive shell"
+  , ""
+  , "Example usage:"
+  , "$ ./Knapsack create test"
+  , "$ echo \"Ultra secret message\" | ./Knapsack encrypt test.pub > c"
+  , "$ cat c | ./Knapsack decrypt test.private"
   ]
 
---encrypt :: FilePath -> IO BS.ByteString
---encrypt p = do
---  string <- BS.getContents
---  key <- K.loadPublicKey p
---  return (KS.encryptString key string)
---
---decrypt :: FilePath -> IO BS.ByteString
---decrypt p = do
---  string <- BS.getContents
---  key <- K.loadPrivateKey p
---  return (KS.decryptString key string)
---
---create :: String -> IO String
---create name = do
---  let private = K.genPrivateKey 8
---  _ <- K.savePrivateKey private (name ++ ".private")
---  let public = K.genPublicKey private
---  _ <- K.savePublicKey public (name ++ ".pub")
---  return "Created key pair."
+encrypt :: FilePath -> IO String
+encrypt p = do
+  k <- K.loadPublicKey p
+  s <- getContents
+  let c = show (KS.encryptString k s)
+  return c
+
+decrypt :: FilePath -> IO String
+decrypt p = do
+  k <- K.loadPrivateKey p
+  s <- getContents
+  let l = read s :: [Integer]
+  return (KS.decryptString k l)
+
+create :: String -> IO String
+create name = do
+  let private = K.genPrivateKey 8
+  let privateName = name ++ ".private"
+  K.savePrivateKey private privateName
+  let public = K.genPublicKey private
+  let publicName = name ++ ".pub"
+  K.savePublicKey public publicName
+  let s = unwords ["Create two key files:", privateName, publicName]
+  return s
+
+crack :: String -> IO String
+crack p = do
+  k <- K.loadPublicKey p
+  return "foo"

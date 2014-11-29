@@ -2,8 +2,6 @@ module Knapsack where
 
 import Keys
 import Bitfield
-import qualified Data.ByteString.Lazy as BS
-import qualified Data.Binary as B
 
 -- Erweiterter euklidischer Algorithmus
 extEuclid :: Integer -> Integer -> (Integer, Integer, Integer)
@@ -52,4 +50,3 @@ decryptBitStream k (c:cs) = decrypt k c ++ decryptBitStream k cs
 
 decryptString :: PrivateKey -> [Integer] -> String
 decryptString k c = binToString $ map fromIntegral $ decryptBitStream k c
-

@@ -16,7 +16,7 @@ Executable Knapsack
     random,
     array,
     Lattices,
-    bytestring,
-    binary
+    binary,
+    QuickCheck
 
   Main-Is: Main.hs
