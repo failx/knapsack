@@ -1,0 +1,22 @@
+Name: Knapsack
+Version: 0.0.1
+Cabal-Version: >= 1.2
+License: GPL
+Author: Georg Seifert, Anian Bauman, Felix Martin
+Category: Cryptography
+Synopsis: Merkel-Hellman Crypto System
+Description: 
+  A simple implementation of the Merkel-Hellman Crypto System.
+  Messages can be decrypted using a LLL based attacked.
+Build-Type: Simple
+
+Executable Knapsack
+  Build-Depends:  
+    base,
+    random,
+    array,
+    Lattices,
+    bytestring,
+    binary
+
+  Main-Is: Main.hs
