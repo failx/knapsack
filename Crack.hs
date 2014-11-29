@@ -6,7 +6,7 @@ import Data.Ratio ((%))
 import Keys
 
 -- function for cracking a knapsack encoded value
-crack :: PublicKey -> Integer -> [Integer]
+crack :: PublicKey -> Integer -> [Int]
 crack k m = get_solution . apply_lll . prepare_matrix $ prepare_key k m
 
 -- append the negative of the encrypted message to the public key sequence
@@ -15,7 +15,7 @@ prepare_key k m = publicKeySequence k ++ [-m]
 
 -- filter for vector that might be a solution for knapsack problem
 -- and converts into appropriate format (to integer and remove last element)
-get_solution :: [[Rational]] -> [Integer]
+get_solution :: [[Rational]] -> [Int]
 get_solution = init . map round . head . filter is_solution
 
 -- take a list and decide whether it is a valid bit field (containing only 1 and 0)

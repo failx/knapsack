@@ -4,7 +4,8 @@ import qualified System.Environment as SE
 import qualified Knapsack as KS
 import qualified Keys as K
 import qualified Tests as T
-import Crack
+import qualified Crack as C
+import qualified Bitfield as B
 
 main = SE.getArgs >>= handleArgs >>= putStrLn
 
@@ -12,20 +13,20 @@ handleArgs :: [String] -> IO String
 handleArgs ["encrypt", publicKey]  = Main.encrypt publicKey
 handleArgs ["decrypt", privateKey] = Main.decrypt privateKey
 handleArgs ["create", fileName]    = Main.create fileName
+handleArgs ["crack", publicKey]    = Main.crack publicKey
 --handleArgs ["runtests"]            = return . show $ T.test
 --handleArgs ["shell"]               = return "foo"
-handleArgs ["crack", publicKey]    = Main.crack publicKey
 handleArgs _                       = return $ unlines options
 
 options = 
   [ "Usage: "
   , ""
-  , "Knapsack encrypt <public key file>  -- encrypt message from stdin"
-  , "Knapsack decrypt <private key file> -- decrypt message from stdin"
-  , "Knapsack create <keypair name>      -- creates a public/private key pair"
-  , "Knapsack crack <public key file>    -- crack message from stdin"
-  , "Knapsack runtests                   -- runs tests for the different modules"
-  , "Knapsack shell                      -- starts an interactive shell"
+  , "./Knapsack encrypt <public key file>  -- encrypt message from stdin"
+  , "./Knapsack decrypt <private key file> -- decrypt message from stdin"
+  , "./Knapsack create <keypair name>      -- creates a public/private key pair"
+  , "./Knapsack crack <public key file>    -- crack message from stdin"
+  , "./Knapsack runtests                   -- runs tests for the different modules"
+  , "./Knapsack shell                      -- starts an interactive shell"
   , ""
   , "Example usage:"
   , "$ ./Knapsack create test"
@@ -61,4 +62,7 @@ create name = do
 crack :: String -> IO String
 crack p = do
   k <- K.loadPublicKey p
-  return "foo"
+  s <- getContents
+  let l = read s :: [Integer]
+  let m = concat $ map (B.binToString . C.crack k) l
+  return m
