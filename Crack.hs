@@ -3,24 +3,15 @@ module Crack (crack) where
 import Math.Lattices.LLL (lll)
 import Data.Array (elems)
 import Data.Ratio ((%))
-import Data.List (transpose)
+import Keys
 
-m = [[1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-     [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-     [575, 436, 1586, 1030, 1921, 569, 721, 1183, 1570, -6665]] :: [[Rational]]
+-- function for cracking a knapsack encoded value
+crack :: PublicKey -> Integer -> [Integer]
+crack k m = get_solution . apply_lll . prepare_matrix $ prepare_key k m
 
-m' = transpose m
-
--- function for cracking a knapsack integer sequence
-crack :: [Integer] -> [Integer]
-crack = get_solution . apply_lll . prepare_matrix
+-- append the negative of the encrypted message to the public key sequence
+prepare_key :: PublicKey -> Integer -> [Integer]
+prepare_key k m = publicKeySequence k ++ [-m]
 
 -- filter for vector that might be a solution for knapsack problem
 -- and converts into appropriate format (to integer and remove last element)
