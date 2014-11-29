@@ -1,6 +1,7 @@
 module Knapsack where
 
 import Keys
+import Bitfield
 import qualified Data.ByteString.Lazy as BS
 import qualified Data.Binary as B
 
@@ -38,14 +39,17 @@ decryptHelp (k:ks) c | c - k >= 0 = (decryptHelp ks (c - k)) ++ [1]
 decrypt :: PrivateKey -> Integer -> [Integer]
 decrypt k c = decryptHelp (reverse (privateKeySequence k)) (((c * (multInverse (privateKeyR k) (privateKeyQ k))) `mod` (privateKeyQ k)))
 
-encryptString :: PublicKey -> BS.ByteString -> BS.ByteString
-encryptString k bs = undefined
+encryptBitStream :: PublicKey -> [Integer] -> [Integer]
+encryptBitStream _ [] = []
+encryptBitStream k bs = encrypt k (take (publicKeySize k) bs) : encryptBitStream k (drop (publicKeySize k) bs)
 
-decryptString :: PrivateKey -> BS.ByteString -> BS.ByteString
-decryptString k bs = undefined
+encryptString :: PublicKey -> String -> [Integer]
+encryptString k s = encryptBitStream k $ map toInteger $ stringToBin s
 
-toBitfield :: B.Word8 -> [Integer]
-toBitfield = undefined
+decryptBitStream :: PrivateKey -> [Integer] -> [Integer]
+decryptBitStream k [] = []
+decryptBitStream k (c:cs) = decrypt k c ++ decryptBitStream k cs
 
-fromBitfield :: [Integer] -> B.Word8
-fromBitfield = undefined
+decryptString :: PrivateKey -> [Integer] -> String
+decryptString k c = binToString $ map fromIntegral $ decryptBitStream k c
+
