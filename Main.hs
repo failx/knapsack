@@ -14,7 +14,7 @@ handleArgs ["encrypt", publicKey]  = Main.encrypt publicKey
 handleArgs ["decrypt", privateKey] = Main.decrypt privateKey
 handleArgs ["create", fileName]    = Main.create fileName
 handleArgs ["crack", publicKey]    = Main.crack publicKey
---handleArgs ["runtests"]            = return . show $ T.test
+handleArgs ["runtests"]            = return . show $ T.test
 handleArgs _                       = return $ unlines options
 
 options = 
