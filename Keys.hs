@@ -16,7 +16,7 @@ data PublicKey  = PublicKey { publicKeySize :: Int
                             } deriving (Show, Read)
 
 -- Save Private Key 
-savePrivateKey :: PrivateKey -> FilePath -> IO()
+savePrivateKey :: PrivateKey -> FilePath -> IO ()
 savePrivateKey k p = writeFile p (show k)
 
 -- Load Private Key
@@ -24,7 +24,7 @@ loadPrivateKey :: FilePath -> IO PrivateKey
 loadPrivateKey p = fmap read (readFile p)
                    
 -- Save Public Key
-savePublicKey :: PublicKey -> FilePath -> IO()
+savePublicKey :: PublicKey -> FilePath -> IO ()
 savePublicKey k p = writeFile p (show k)
 
 -- Load Public Key

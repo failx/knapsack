@@ -28,9 +28,9 @@ apply_lll = elems . lll
 
 -- take a knapsack problem and convert into attackable form
 prepare_matrix :: [Integer] -> [[Rational]]
-prepare_matrix is = zipWith (\i r -> i ++ [r]) id_matrix ks_as_rational
+prepare_matrix is = zipWith (\i r -> i ++ [r]) id_matrix is_as_rational
   where l = length is
-        ks_as_rational= map toRational is
+        is_as_rational = map toRational is
         id_matrix = identity_matrix (l - 1) ++ [take (l - 1) zeros]
 
 -- build identity matrix of size n with a row of zeros appended to the right side

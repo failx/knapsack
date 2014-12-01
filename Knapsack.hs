@@ -18,7 +18,7 @@ multInverse a b = let (d,s,t) = extEuclid a b
 
 -- Encrypt a list (Bitfield) with the Public Key Sequence
 encryptHelp :: [Integer] -> [Integer] -> Integer
-encryptHelp k t = sum $ zipWith (*) k t
+encryptHelp = (sum .) . zipWith (*)
 
 -- Encrypt a List of 0,1 (Bitfield) with a PublicKey
 encrypt :: PublicKey -> [Integer] -> Integer
