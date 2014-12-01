@@ -1,7 +1,6 @@
 module Keys where
 
 import System.Random
-import System.IO
 import System.IO.Unsafe
 
 -- Datenstruktur fuer eine privaten Schluessel
