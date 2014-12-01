@@ -15,18 +15,16 @@ handleArgs ["decrypt", privateKey] = Main.decrypt privateKey
 handleArgs ["create", fileName]    = Main.create fileName
 handleArgs ["crack", publicKey]    = Main.crack publicKey
 --handleArgs ["runtests"]            = return . show $ T.test
---handleArgs ["shell"]               = return "foo"
 handleArgs _                       = return $ unlines options
 
 options = 
-  [ "Usage: "
+  [ "Usage:"
   , ""
   , "./Knapsack encrypt <public key file>  -- encrypt message from stdin"
   , "./Knapsack decrypt <private key file> -- decrypt message from stdin"
   , "./Knapsack create <keypair name>      -- creates a public/private key pair"
   , "./Knapsack crack <public key file>    -- crack message from stdin"
   , "./Knapsack runtests                   -- runs tests for the different modules"
-  , "./Knapsack shell                      -- starts an interactive shell"
   , ""
   , "Example usage:"
   , "$ ./Knapsack create test"
